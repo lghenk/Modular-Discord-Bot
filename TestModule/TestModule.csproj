@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>G:\Dropbox\Dropbox\Projects\BobTheBot - Builds\Modules</OutputPath>
+    <OutputPath>..\..\BobTheBot - Builds\Modules</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>

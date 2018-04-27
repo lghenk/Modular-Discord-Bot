@@ -28,21 +28,15 @@ namespace BobTheBot {
             // We should also get rid of it after X minutes of no activity of this user
             if (!userData.ContainsKey(id)) {
                 if (File.Exists(dataPath + id + ".json")) {
-                    Console.WriteLine("Load Json");
-
                     userData.Add(id, JsonConvert.DeserializeObject<UserModel>(File.ReadAllText(dataPath + id + ".json")));
                     return userData[id];
                 } else {
-                    Console.WriteLine("Create New");
-
                     UserModel newModel = new UserModel();
                     newModel.id = id;
                     SaveModel(newModel);
                     return newModel;
                 }
             } else {
-                Console.WriteLine("Load Cache");
-
                 return userData[id];
             }
         }
@@ -52,14 +46,21 @@ namespace BobTheBot {
         }
 
         public T GetValue<T>(ulong id, string key, T def = default(T)) {
-
             UserModel model = LoadUser(id);
 
             if (model.values.ContainsKey(key)) {
-                return (T)model.values[key];
+                if (model.values[key] is T) {
+                    return (T)model.values[key];
+                }
+
+                try {
+                    return (T)Convert.ChangeType(model.values[key], typeof(T));
+                } catch {
+                    return def;
+                }
             }
-            
-            return default(T);
+
+            return def;
         }
 
         public void SetValue(ulong id, string key, object value) {

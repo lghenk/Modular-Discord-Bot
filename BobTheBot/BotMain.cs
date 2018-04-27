@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord.Rest;
 
-// Use the following link to invite bot to servers https://discordapp.com/oauth2/authorize?client_id=415283644114927647&scope=bot&permissions=2146958591
-
 #pragma warning disable 1587
 /// <summary author="Timo Heijne">
 /// The brains of the actual bot. Here we connect and setup most of the base functionality. We would reference this in a console application (in this bots case ConsoleFrame)
@@ -21,6 +19,7 @@ namespace BobTheBot {
         public UserData userData { get; private set; }
 
         private ModuleLoader _moduleLoader;
+        private CommandRegistry _commandRegistry;
 
         public BotMain() {
             MainAsync();
@@ -34,6 +33,8 @@ namespace BobTheBot {
             client = new DiscordSocketClient();
             settings = new Settings();
             userData = new UserData();
+
+            _commandRegistry = new CommandRegistry();
             _moduleLoader = new ModuleLoader();
 
             if (!settings.IsValid) {
@@ -60,14 +61,16 @@ namespace BobTheBot {
             Console.WriteLine("BotMain :: Connection to discord.. Successfull");
         }
 
-        private async Task MessageReceived(SocketMessage message) {
-            Console.WriteLine($"MessageReceived :: {message.Author.Id}({message.Author.Username}) > {message.Content} | Total Num Messages: 0");
+        private async Task MessageReceived(SocketMessage message)
+        {   
+            Console.WriteLine($"MessageReceived :: {message.Author.Id}({message.Author.Username}) > {message.Content}");
 
+            //int totalMessages = (int)userData.GetValue(message.Author.Id, "NumMessages", 0);
             int totalMessages = userData.GetValue<int>(message.Author.Id, "NumMessages", 0);
             totalMessages += 1;
             userData.SetValue(message.Author.Id, "NumMessages", totalMessages);
 
-            string[] content = message.Content.Split(' ');
+            /*string[] content = message.Content.Split(' ');
 
             var rMessage = (RestUserMessage)await message.Channel.GetMessageAsync(message.Id);
             SocketGuildChannel guild = message.Channel as SocketGuildChannel;
@@ -77,7 +80,7 @@ namespace BobTheBot {
 
             if (content[0] == ".ping") {
                 await message.Channel.SendMessageAsync("Pong!");
-            }
+            }*/
         }
     }
 }
